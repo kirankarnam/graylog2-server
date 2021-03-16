@@ -95,11 +95,16 @@ public class NaturalDateParser {
             return to;
         }
 
+        public DateTimeZone getTimeZone() {
+            return dateTimeZone;
+        }
+
         public Map<String, String> asMap() {
             Map<String, String> result = Maps.newHashMap();
 
             result.put("from", dateFormat(getFrom()));
             result.put("to", dateFormat(getTo()));
+            result.put("timezone", getTimeZone().getID());
 
             return result;
         }

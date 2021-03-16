@@ -24,6 +24,7 @@ import {
   createElasticsearchQueryString,
   filtersForQuery, KeywordTimeRange,
 } from 'views/logic/queries/Query';
+import DateTime from 'logic/datetimes/DateTime';
 
 type RawRelativeRange = {
   rangetype: 'relative';
@@ -39,6 +40,7 @@ type RawAbsoluteRange = {
 type RawKeywordRange = {
   rangetype: 'keyword';
   keyword?: string;
+  timezone?: string;
 };
 
 const _getRange = (query): RawAbsoluteRange | RawRelativeRange | RawKeywordRange => {
@@ -84,8 +86,9 @@ const _getTimerange = (query = {}) => {
         } as AbsoluteTimeRange
         : undefined;
     case 'keyword':
-      return range.keyword ? { type: range.rangetype, keyword: range.keyword } as KeywordTimeRange : undefined;
-    default:
+      // TODO: timezone from the request, it should not be necessary to set it again via getUserTimezone()
+      return range.keyword ? { type: range.rangetype, keyword: range.keyword, timezone: DateTime.getUserTimezone() } as KeywordTimeRange : undefined;
+default:
       // @ts-ignore
       throw new Error(`Unsupported range type ${range.rangetype}`);
   }
