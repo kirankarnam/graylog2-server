@@ -46,9 +46,9 @@ const ErrorMessage = styled.span(({ theme }) => css`
 `);
 
 const _parseKeywordPreview = (data) => {
-  const from = DateTime.fromUTCDateTime(data.from).toString();
-  const to = DateTime.fromUTCDateTime(data.to).toString();
   const timezone = data.timezone;
+  const from = DateTime.fromDateTimeAndTZ(data.from, timezone).toString();
+  const to = DateTime.fromDateTimeAndTZ(data.to, timezone).toString();
 
   const result = { from, to, timezone };
   console.log(result);
