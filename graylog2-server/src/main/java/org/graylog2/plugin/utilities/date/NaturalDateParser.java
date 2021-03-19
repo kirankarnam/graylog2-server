@@ -23,6 +23,7 @@ import org.graylog2.plugin.Tools;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.TimeZone;
 
 public class NaturalDateParser {
     private final TimeZone timeZone;
+    private final ZoneId zoneId;
     private final DateTimeZone dateTimeZone;
 
     public NaturalDateParser() {
@@ -39,25 +41,40 @@ public class NaturalDateParser {
 
     public NaturalDateParser(final String timeZone) {
         this.timeZone = TimeZone.getTimeZone(timeZone);
+        this.zoneId = ZoneId.of(timeZone);
         this.dateTimeZone = DateTimeZone.forTimeZone(this.timeZone);
+    }
+
+    public Date alignToStartOfDay(Date dateToConvert) {
+        return java.util.Date.from(dateToConvert.toInstant().atZone(zoneId).toLocalDate().atStartOfDay().atZone(zoneId).toInstant());
+    }
+
+    public Date alignToEndOfDay(Date dateToConvert) {
+        return java.util.Date.from(dateToConvert.toInstant().atZone(zoneId).plusDays(1).toLocalDate().atStartOfDay().atZone(zoneId).toInstant());
     }
 
     public Result parse(final String string) throws DateNotParsableException {
         Date from = null;
         Date to = null;
 
-        final Parser parser = new Parser(this.timeZone);
+        final Parser parser = new Parser(timeZone);
         final List<DateGroup> groups = parser.parse(string);
         if (!groups.isEmpty()) {
-            final List<Date> dates = groups.get(0).getDates();
+            // only working on with the first DateGroup
+            final DateGroup group = groups.get(0);
+            final boolean timeIsInferred = group.isTimeInferred();
+
+            final List<Date> dates = group.getDates();
             Collections.sort(dates);
 
             if (dates.size() >= 1) {
-                from = dates.get(0);
+                from = timeIsInferred ? alignToStartOfDay(dates.get(0)) : dates.get(0);
             }
 
             if (dates.size() >= 2) {
-                to = dates.get(1);
+                to = timeIsInferred ? alignToEndOfDay(dates.get(1)) : dates.get(1);
+            } else {
+                to = timeIsInferred ? alignToEndOfDay(dates.get(0)) : null;
             }
         } else {
             throw new DateNotParsableException("Unparsable date: " + string);
