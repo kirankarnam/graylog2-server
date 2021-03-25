@@ -86,8 +86,7 @@ const _getTimerange = (query = {}) => {
         } as AbsoluteTimeRange
         : undefined;
     case 'keyword':
-      // TODO: timezone from the request, it should not be necessary to set it again via getUserTimezone()
-      return range.keyword ? { type: range.rangetype, keyword: range.keyword, timezone: DateTime.getUserTimezone() } as KeywordTimeRange : undefined;
+      return range.keyword ? { type: range.rangetype, keyword: range.keyword, timezone: range.timezone } as KeywordTimeRange : undefined;
 default:
       // @ts-ignore
       throw new Error(`Unsupported range type ${range.rangetype}`);

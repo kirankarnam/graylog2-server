@@ -50,9 +50,7 @@ const _parseKeywordPreview = (data) => {
   const from = DateTime.fromDateTimeAndTZ(data.from, timezone).toString();
   const to = DateTime.fromDateTimeAndTZ(data.to, timezone).toString();
 
-  const result = { from, to, timezone };
-  console.log(result);
-  return result;
+  return  { from, to, timezone };
 };
 
 type Props = {
@@ -75,7 +73,7 @@ const TabKeywordTimeRange = ({ defaultValue, disabled, setValidatingKeyword }: P
   [setValidatingKeyword]);
 
   const _setFailedPreview = useCallback(() => {
-    setKeywordPreview({ from: EMPTY_RANGE, to: EMPTY_RANGE, timezone: 'UTC' });
+    setKeywordPreview({ from: EMPTY_RANGE, to: EMPTY_RANGE, timezone: DateTime.getUserTimezone() });
 
     return 'Unable to parse keyword.';
   }, [setKeywordPreview]);
