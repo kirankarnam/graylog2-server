@@ -24,6 +24,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.jodatime.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 
 public class NaturalDateParserTest {
@@ -139,10 +140,10 @@ public class NaturalDateParserTest {
         NaturalDateParser p = new NaturalDateParser("Etc/UTC");
 
         NaturalDateParser.Result result1 = p.parse("last hour");
-        org.assertj.jodatime.api.Assertions.assertThat(result1.getFrom()).as("from should be before to in").isBefore(result1.getTo());
+        assertThat(result1.getFrom()).as("from should be before to in").isBefore(result1.getTo());
 
         NaturalDateParser.Result result2 = p.parse("last one hour");
-        org.assertj.jodatime.api.Assertions.assertThat(result2.getFrom()).as("from should be before to in").isBefore(result2.getTo());
+        assertThat(result2.getFrom()).as("from should be before to in").isBefore(result2.getTo());
     }
 
     // https://github.com/Graylog2/graylog2-server/issues/1226
@@ -150,12 +151,12 @@ public class NaturalDateParserTest {
     @Test
     public void issue1226() throws Exception {
         NaturalDateParser.Result result99days = naturalDateParser.parse("last 99 days");
-        org.assertj.jodatime.api.Assertions.assertThat(result99days.getFrom()).isEqualToIgnoringMillis(result99days.getTo().minusDays(100));
+        assertThat(result99days.getFrom()).isEqualToIgnoringMillis(result99days.getTo().minusDays(100));
 
         NaturalDateParser.Result result100days = naturalDateParser.parse("last 100 days");
-        org.assertj.jodatime.api.Assertions.assertThat(result100days.getFrom()).isEqualToIgnoringMillis(result100days.getTo().minusDays(101));
+        assertThat(result100days.getFrom()).isEqualToIgnoringMillis(result100days.getTo().minusDays(101));
 
         NaturalDateParser.Result result101days = naturalDateParser.parse("last 101 days");
-        org.assertj.jodatime.api.Assertions.assertThat(result101days.getFrom()).isEqualToIgnoringMillis(result101days.getTo().minusDays(102));
+        assertThat(result101days.getFrom()).isEqualToIgnoringMillis(result101days.getTo().minusDays(102));
     }
 }
