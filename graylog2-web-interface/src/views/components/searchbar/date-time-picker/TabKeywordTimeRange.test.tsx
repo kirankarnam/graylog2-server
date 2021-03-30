@@ -36,13 +36,14 @@ const TabKeywordTimeRange = ({ defaultValue, ...props }: { defaultValue: string 
   </Formik>
 );
 
-jest.mock('logic/datetimes/DateTime', () => ({ fromUTCDateTime: (date) => date, getUserTimezone: () => 'UTC' }));
+jest.mock('logic/datetimes/DateTime', () => ({ fromUTCDateTime: (date) => date, getUserTimezone: () => 'Europe/Berlin' }));
 
 describe('TabKeywordTimeRange', () => {
   beforeEach(() => {
     ToolsStore.testNaturalDate = jest.fn(() => Promise.resolve({
       from: '2018-11-14 13:52:38',
       to: '2018-11-14 13:57:38',
+      timezone: 'Europe/Berlin',
     }));
   });
 
