@@ -46,11 +46,11 @@ const ErrorMessage = styled.span(({ theme }) => css`
 `);
 
 const _parseKeywordPreview = (data) => {
-  const timezone = data.timezone;
+  const { timezone } = data;
   const from = DateTime.fromDateTimeAndTZ(data.from, timezone).toString();
   const to = DateTime.fromDateTimeAndTZ(data.to, timezone).toString();
 
-  return  { from, to, timezone };
+  return { from, to, timezone };
 };
 
 type Props = {
