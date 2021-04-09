@@ -14,9 +14,9 @@
  * along with this program. If not, see
  * <http://www.mongodb.com/licensing/server-side-public-license>.
  */
-import AggregationWidgetConfig from 'views/logic/aggregationbuilder/AggregationWidgetConfig';
+import AggregationWidgetConfig, { AggregationWidgetConfigBuilder } from 'views/logic/aggregationbuilder/AggregationWidgetConfig';
 
-import type { WidgetConfigFormValues } from '../WidgetConfigForm';
+import type { WidgetConfigFormValues, WidgetConfigValidationErrors } from '../WidgetConfigForm';
 
 export type AggregationElement = {
   title: string,
@@ -24,7 +24,8 @@ export type AggregationElement = {
   allowCreate: (formValues: WidgetConfigFormValues) => boolean,
   order: number,
   addEmptyElement?: (formValues: WidgetConfigFormValues) => WidgetConfigFormValues,
-  toConfig?: (formValues: WidgetConfigFormValues, currentConfig: AggregationWidgetConfig) => AggregationWidgetConfig,
+  removeElementSection?: (index: number, formValues) => WidgetConfigFormValues,
+  toConfig?: (formValues: WidgetConfigFormValues, currentConfigBuilder: AggregationWidgetConfigBuilder) => AggregationWidgetConfigBuilder,
   fromConfig?: (config: AggregationWidgetConfig) => Partial<WidgetConfigFormValues>,
   onCreate?: () => void,
   onDeleteAll?: (formValues: WidgetConfigFormValues) => WidgetConfigFormValues,
@@ -32,5 +33,5 @@ export type AggregationElement = {
     config: AggregationWidgetConfig,
     onConfigChange: (newConfig: AggregationWidgetConfig) => void
   }>,
-  validate?: (formValues: WidgetConfigFormValues) => { [key: string]: any },
+  validate?: (formValues: WidgetConfigFormValues) => WidgetConfigValidationErrors,
 }

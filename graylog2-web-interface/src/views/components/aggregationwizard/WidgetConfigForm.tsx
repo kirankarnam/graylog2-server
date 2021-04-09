@@ -16,7 +16,10 @@
  */
 import * as React from 'react';
 import { Form, Formik, FormikProps } from 'formik';
+import { ConfigurationField } from 'views/types';
 
+import PropagateValidationState from 'views/components/aggregationwizard/PropagateValidationState';
+import VisualizationConfig from 'views/logic/aggregationbuilder/visualizations/VisualizationConfig';
 import { AutoTimeConfig, TimeUnitConfig } from 'views/logic/aggregationbuilder/Pivot';
 
 export type MetricFormValues = {
@@ -33,22 +36,43 @@ type GroupingField<T extends 'values' | 'time'> = {
 
 export type GroupingDirection = 'row' | 'column';
 
-export type DateGrouping = {
+export type BaseGrouping = {
   direction: GroupingDirection,
+};
+
+export type DateGrouping = BaseGrouping & {
   field: GroupingField<'time'>,
   interval: AutoTimeConfig | TimeUnitConfig,
-}
-export type ValuesGrouping = {
-  direction: GroupingDirection,
+};
+
+export type ValuesGrouping = BaseGrouping & {
   field: GroupingField<'values'>,
   limit: number,
 };
 
 export type GroupByFormValues = DateGrouping | ValuesGrouping;
 
-export type VisualizationFormValues = {};
+export type VisualizationConfigFormValues = {};
 
-export type SortFormValues = {}
+export type VisualizationFormValues = {
+  type: string,
+  config?: VisualizationConfigFormValues,
+  eventAnnotation?: boolean,
+};
+
+export type VisualizationConfigDefinition = {
+  fromConfig: (config: VisualizationConfig | undefined) => VisualizationConfigFormValues,
+  toConfig: (formValues: VisualizationConfigFormValues) => VisualizationConfig,
+  createConfig?: () => Partial<VisualizationConfigFormValues>,
+  fields: Array<ConfigurationField>,
+};
+
+export type SortFormValues = {
+  type: 'metric' | 'groupBy',
+  field: string,
+  direction: 'Ascending' | 'Descending',
+}
+
 export interface WidgetConfigFormValues {
   metrics?: Array<MetricFormValues>,
   groupBy?: {
@@ -56,7 +80,14 @@ export interface WidgetConfigFormValues {
     groupings: Array<GroupByFormValues>,
   },
   visualization?: VisualizationFormValues,
-  sort?: SortFormValues,
+  sort?: Array<SortFormValues>,
+}
+
+export interface WidgetConfigValidationErrors {
+  metrics?: Array<{ [key: string]: string }>,
+  groupBy?: { groupings: Array<{ [key: string]: string }> },
+  visualization?: { [key: string]: string | any },
+  sort?: { [key: string]: string },
 }
 
 type Props = {
@@ -76,6 +107,7 @@ const WidgetConfigForm = ({ children, onSubmit, initialValues, validate }: Props
                                     onSubmit={onSubmit}>
       {(...args) => (
         <Form className="form form-horizontal">
+          <PropagateValidationState />
           {typeof children === 'function' ? children(...args) : children}
         </Form>
       )}

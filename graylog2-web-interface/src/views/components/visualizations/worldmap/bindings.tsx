@@ -14,13 +14,14 @@
  * along with this program. If not, see
  * <http://www.mongodb.com/licensing/server-side-public-license>.
  */
-package org.graylog.plugins.views.search.rest;
+import type { VisualizationType } from 'views/types';
 
-import javax.ws.rs.NameBinding;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import WorldMapVisualization from 'views/components/visualizations/worldmap/WorldMapVisualization';
 
-@NameBinding
-@Retention(RetentionPolicy.RUNTIME)
-public @interface SupportOnlyValidExportFormats {
-}
+const worldMap: VisualizationType = {
+  type: WorldMapVisualization.type,
+  displayName: 'World Map',
+  component: WorldMapVisualization,
+};
+
+export default worldMap;
