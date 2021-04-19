@@ -17,6 +17,7 @@
 import * as React from 'react';
 import { FieldArray, useFormikContext } from 'formik';
 
+import { SortableList } from 'components/common';
 import Sort from 'views/components/aggregationwizard/elementConfiguration/Sort';
 import ElementConfigurationContainer
   from 'views/components/aggregationwizard/elementConfiguration/ElementConfigurationContainer';
@@ -28,17 +29,18 @@ const SortConfiguration = () => {
 
   return (
     <FieldArray name="sort"
-                render={() => (
-                  <>
-                    <div>
-                      {sort.map((s, index) => (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <ElementConfigurationContainer key={`sort-${index}`}>
-                          <Sort index={index} />
-                        </ElementConfigurationContainer>
-                      ))}
-                    </div>
-                  </>
+                render={({ move }) => (
+                  <SortableList items={sort.map((item) => ({ ...item, id: item.field }))}
+                                onMoveItem={(_, newIndex, oldIndex) => move(newIndex, oldIndex)}
+                                customContentRender={({ index, dragHandleProps, draggableProps, className, ref }) => (
+                                  <ElementConfigurationContainer key={`sort-${index}`}
+                                                                 dragHandleProps={dragHandleProps}
+                                                                 draggableProps={draggableProps}
+                                                                 className={className}
+                                                                 ref={ref}>
+                                    <Sort index={index} />
+                                  </ElementConfigurationContainer>
+                                )} />
                 )} />
   );
 };
