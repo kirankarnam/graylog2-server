@@ -113,4 +113,4 @@ const Sort = ({ index }: Props) => {
   );
 };
 
-export default Sort;
+export default React.memo(Sort);
